@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Rules DRD Viewer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .group-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .group-header {
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        .group-title {
+            font-size: 1.5em;
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+        .group-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        .badge-category {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .badge-confidence {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        .rule-list {
+            margin-top: 15px;
+        }
+        .rule-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+        }
+        .rule-id {
+            font-family: monospace;
+            font-size: 0.85em;
+            color: #666;
+        }
+        .rule-desc {
+            margin-top: 5px;
+            color: #333;
+        }
+        .rule-source {
+            margin-top: 5px;
+            font-size: 0.85em;
+            color: #888;
+        }
+        .rule-source a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .rule-source a:hover {
+            text-decoration: underline;
+        }
+        .load-instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .graph-container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Business Rules DRD Viewer</h1>
+        <p>Decision Requirements Diagram - Extracted from SQL Codebase</p>
+    </div>
+
+    <div class="load-instructions">
+        <strong>📁 How to use:</strong>
+        <ol>
+            <li>Open this file in your web browser</li>
+            <li>Click "Choose File" below</li>
+            <li>Select your <code>drd.json</code> file</li>
+            <li>The rules will be displayed below</li>
+        </ol>
+        <input type="file" id="fileInput" accept=".json" style="margin-top: 10px;">
+    </div>
+
+    <div id="content"></div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    displayDRD(data);
+                } catch (err) {
+                    alert('Error parsing JSON: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function displayDRD(data) {
+            const content = document.getElementById('content');
+
+            // Summary
+            const totalRules = data.rules ? data.rules.length : 0;
+            const totalGroups = data.groups ? data.groups.length : 0;
+            const totalDeps = data.dependencies ? data.dependencies.length : 0;
+
+            let html = '<div class="summary">';
+            html += `
+                <div class="stat-card">
+                    <div class="stat-number">${totalRules}</div>
+                    <div class="stat-label">Total Rules</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalGroups}</div>
+                    <div class="stat-label">Rule Groups</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalDeps}</div>
+                    <div class="stat-label">Dependencies</div>
+                </div>
+            `;
+            html += '</div>';
+
+            // Rule Groups
+            if (data.groups) {
+                html += '<h2 style="margin-top: 40px; margin-bottom: 20px;">Rule Groups</h2>';
+
+                data.groups.forEach(group => {
+                    html += '<div class="group-card">';
+                    html += '<div class="group-header">';
+                    html += `<h3 class="group-title">${escapeHtml(group.name)}</h3>`;
+                    html += '<div class="group-meta">';
+                    html += `<span class="badge badge-category">${escapeHtml(group.category)}</span>`;
+                    html += `<span class="badge badge-confidence">Confidence: ${(group.confidence * 100).toFixed(0)}%</span>`;
+                    html += `<span>📝 ${group.rules.length} rules</span>`;
+                    html += '</div>';
+                    html += '</div>';
+
+                    html += `<p style="color: #666; margin: 15px 0;">${escapeHtml(group.description)}</p>`;
+
+                    html += '<div class="rule-list">';
+                    html += '<h4>Rules:</h4>';
+
+                    // Show first 5 rules
+                    const rulesToShow = group.rules.slice(0, 5);
+                    rulesToShow.forEach(rule => {
+                        html += '<div class="rule-item">';
+                        html += `<div class="rule-id">${escapeHtml(rule.id)}</div>`;
+                        html += `<div class="rule-desc">${escapeHtml(rule.description)}</div>`;
+                        html += `<div class="rule-source">📍 ${escapeHtml(rule.source.file_path)}:${rule.source.start_line}</div>`;
+                        html += '</div>';
+                    });
+
+                    if (group.rules.length > 5) {
+                        html += `<p style="color: #666; margin-top: 10px;">... and ${group.rules.length - 5} more rules</p>`;
+                    }
+
+                    html += '</div>';
+                    html += '</div>';
+                });
+            }
+
+            content.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.toString().replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>
