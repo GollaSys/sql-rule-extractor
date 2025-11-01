@@ -64,17 +64,25 @@ class RuleNormalizer:
 
     def _normalize_expression(self, expression: str) -> str:
         """Normalize a rule expression."""
-        # Remove extra whitespace
-        normalized = re.sub(r'\s+', ' ', expression).strip()
+        # Use placeholders to protect multi-char operators
+        normalized = expression.replace('==', '§EQ§')
+        normalized = normalized.replace('>=', '§GE§')
+        normalized = normalized.replace('<=', '§LE§')
+        normalized = normalized.replace('!=', '§NE§')
 
-        # Standardize comparison operators
-        normalized = normalized.replace('==', '=')
-        normalized = re.sub(r'\s*=\s*', ' = ', normalized)
-        normalized = re.sub(r'\s*>\s*', ' > ', normalized)
-        normalized = re.sub(r'\s*<\s*', ' < ', normalized)
-        normalized = re.sub(r'\s*>=\s*', ' >= ', normalized)
-        normalized = re.sub(r'\s*<=\s*', ' <= ', normalized)
-        normalized = re.sub(r'\s*!=\s*', ' != ', normalized)
+        # Now replace single-char operators
+        normalized = normalized.replace('=', ' = ')
+        normalized = normalized.replace('>', ' > ')
+        normalized = normalized.replace('<', ' < ')
+
+        # Restore multi-char operators with proper spacing
+        normalized = normalized.replace('§EQ§', ' = ')
+        normalized = normalized.replace('§GE§', ' >= ')
+        normalized = normalized.replace('§LE§', ' <= ')
+        normalized = normalized.replace('§NE§', ' != ')
+
+        # Now collapse multiple spaces
+        normalized = re.sub(r'\s+', ' ', normalized).strip()
 
         # Standardize logical operators
         normalized = re.sub(r'\bAND\b', 'AND', normalized, flags=re.IGNORECASE)
