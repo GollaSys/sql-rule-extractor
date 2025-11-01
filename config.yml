@@ -1,0 +1,90 @@
+# SQL Rule Extractor Configuration
+
+# LLM Configuration
+llm:
+  provider: "stub"  # Options: stub (no API calls), anthropic, openai
+  model: "claude-3-5-sonnet-20241022"
+  api_key_env: "ANTHROPIC_API_KEY"  # Environment variable name for API key
+  temperature: 0.1
+  max_tokens: 4096
+
+# Clustering Configuration
+clustering:
+  method: "kmeans"  # Options: kmeans, hierarchical, dbscan
+  n_clusters: 5  # Number of clusters (for kmeans/hierarchical)
+  min_similarity: 0.7  # Minimum similarity threshold for grouping
+  eps: 0.3  # DBSCAN epsilon parameter
+  min_samples: 2  # DBSCAN minimum samples parameter
+  use_embeddings: true  # Use semantic embeddings for clustering
+  use_metadata: true  # Use file/table metadata for clustering
+
+# Parsing Configuration
+parsing:
+  sql_dialects: ["postgres", "mysql", "generic"]  # SQL dialects to support
+  max_file_size_mb: 10  # Skip files larger than this
+  file_extensions:
+    sql: [".sql", ".psql", ".pkb", ".pks", ".ddl"]
+    python: [".py"]
+    java: [".java"]
+    javascript: [".js", ".ts"]
+  ignore_patterns:
+    - "*/node_modules/*"
+    - "*/venv/*"
+    - "*/.venv/*"
+    - "*/dist/*"
+    - "*/build/*"
+    - "*/__pycache__/*"
+
+# Rule Extraction Configuration
+extraction:
+  extract_from_case: true  # Extract rules from CASE statements
+  extract_from_where: true  # Extract rules from WHERE clauses
+  extract_from_having: true  # Extract rules from HAVING clauses
+  extract_from_check: true  # Extract rules from CHECK constraints
+  extract_from_triggers: true  # Extract rules from triggers
+  extract_from_procedures: true  # Extract rules from stored procedures
+  extract_from_functions: true  # Extract rules from functions
+  extract_from_app_code: true  # Extract rules from application code
+  min_rule_complexity: 1  # Minimum complexity score to include rule
+
+# Output Configuration
+output:
+  include_snippets: true  # Include code snippets in output
+  max_snippet_lines: 20  # Maximum lines per snippet
+  generate_graphs: true  # Generate graph visualizations
+  generate_markdown: true  # Generate markdown report
+  generate_json: true  # Generate JSON output
+  pretty_print_xml: true  # Pretty print DMN XML
+
+# Traceability Configuration
+traceability:
+  validate_links: true  # Validate that file paths and line numbers are correct
+  include_git_info: false  # Include git commit/branch info (if repo is git)
+  link_format: "file://{file_path}#L{start_line}"  # Format for IDE links
+
+# DMN Generation Configuration
+dmn:
+  namespace: "http://sql-rule-extractor/dmn"
+  exporter: "SQL Rule Extractor"
+  exporter_version: "1.0.0"
+  include_extensions: true  # Include custom extension elements for traceability
+  decision_prefix: "Decision_"  # Prefix for decision IDs
+  input_data_prefix: "InputData_"  # Prefix for input data IDs
+
+# Enrichment Configuration
+enrichment:
+  enable_domain_mapping: true  # Map columns to domain concepts
+  enable_semantic_analysis: true  # Use LLM for semantic analysis
+  confidence_threshold: 0.6  # Minimum confidence for domain mappings
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null  # Log file path (null = console only)
+
+# Performance Configuration
+performance:
+  max_workers: 4  # Number of parallel workers for parsing
+  batch_size: 100  # Batch size for processing files
+  cache_enabled: true  # Cache parsed results
