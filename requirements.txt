@@ -19,7 +19,7 @@ tree-sitter-javascript>=0.20.0
 
 # Graph and Network Analysis
 networkx>=3.1
-# pygraphviz>=1.11  # Optional, for graph visualization (requires: brew install graphviz)
+pygraphviz>=1.11  # Optional, for SVG visualization (requires: brew install graphviz)
 
 # Machine Learning and Clustering
 numpy>=1.24.0

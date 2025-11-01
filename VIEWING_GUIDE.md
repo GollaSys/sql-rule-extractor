@@ -52,7 +52,64 @@ open results/drd.md
 
 ---
 
-### 2. 🌐 HTML Viewer (Interactive)
+### 2. 🖼️ SVG Visualization (Graph View)
+
+**Best for:** Visual graph representation, presentations, publications
+
+**How to use:**
+
+1. **Generate SVG from JSON:**
+   ```bash
+   # Group-level dependency graph (hierarchical)
+   python -m src.utils.svg_visualizer --json results/drd.json --out results/drd_groups.svg --type groups --layout dot
+
+   # Circular layout for groups
+   python -m src.utils.svg_visualizer --json results/drd.json --out results/drd_groups_circo.svg --type groups --layout circo
+
+   # Rule-level dependency graph (first 30 rules)
+   python -m src.utils.svg_visualizer --json results/drd.json --out results/drd_rules.svg --type rules --max-rules 30
+   ```
+
+2. **View the SVG:**
+   ```bash
+   # Open in default viewer
+   open results/drd_groups.svg
+
+   # Or in browser
+   open -a "Google Chrome" results/drd_groups.svg
+
+   # Or in VS Code
+   code results/drd_groups.svg
+   ```
+
+**Prerequisites:**
+- Requires Graphviz installed: `brew install graphviz`
+- Requires pygraphviz: `pip install pygraphviz`
+
+**Layout options:**
+- `dot` - Hierarchical (default, best for decision flows)
+- `circo` - Circular (good for showing relationships)
+- `neato` - Spring model (force-directed)
+- `fdp` - Force-directed (used for rule graphs)
+- `sfdp` - Scalable force-directed (for large graphs)
+- `twopi` - Radial layout
+
+**Features:**
+- ✅ High-quality vector graphics (scalable)
+- ✅ Color-coded by category
+- ✅ Shows dependency strength
+- ✅ Multiple layout algorithms
+- ✅ Ready for presentations/documents
+
+**Example output:**
+- Groups are shown as rounded boxes
+- Color indicates category (Pricing, Validation, etc.)
+- Arrows show dependencies with strength labels
+- Edge thickness indicates dependency strength
+
+---
+
+### 3. 🌐 HTML Viewer (Interactive)
 
 **Best for:** Interactive exploration, presentations
 
@@ -79,7 +136,7 @@ open results/drd.md
 
 ---
 
-### 3. 🎨 Professional DMN Tools
+### 4. 🎨 Professional DMN Tools
 
 **Best for:** Professional DMN modeling, compliance documentation
 
@@ -144,7 +201,7 @@ open results/drd.md
 
 ---
 
-### 4. 📊 JSON Data (Programmatic)
+### 5. 📊 JSON Data (Programmatic)
 
 **Best for:** Custom visualization, data analysis, integration
 
@@ -199,7 +256,7 @@ code results/drd.json
 
 ---
 
-### 5. 🔍 XML Inspection
+### 6. 🔍 XML Inspection
 
 **Best for:** Technical inspection, DMN validation
 
@@ -236,6 +293,7 @@ Most browsers will show formatted XML with syntax highlighting.
 | Method | Ease of Use | Features | Offline | Best For |
 |--------|-------------|----------|---------|----------|
 | Markdown | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ✅ | Quick review |
+| SVG Visualization | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ✅ | Graph visualization |
 | HTML Viewer | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ✅ | Interactive exploration |
 | Camunda | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ✅ | Professional DMN |
 | bpmn.io | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ❌ | Quick online viewing |

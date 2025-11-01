@@ -69,9 +69,15 @@ This will:
 
 The tool generates several outputs:
 - `drd.xml`: DMN-compliant XML with decision model
-- `drd_report.md`: Human-readable Markdown report
-- `rules.json`: Extracted rules with metadata
-- `graph.png`: Visual representation of rule relationships (if graphviz installed)
+- `drd.md`: Human-readable Markdown report
+- `drd.json`: Extracted rules and groups with metadata
+
+Additional visualization options:
+- **SVG Graphs**: Generate visual dependency graphs with `python -m src.utils.svg_visualizer`
+- **HTML Viewer**: Interactive web-based viewer (open `view_drd.html`)
+- **Professional Tools**: View in Camunda Modeler or bpmn.io
+
+See [VIEWING_GUIDE.md](VIEWING_GUIDE.md) for complete visualization instructions.
 
 ## Usage
 
@@ -87,10 +93,27 @@ python -m src.cli analyze --repo /path/to/codebase --dry-run
 # Custom configuration
 python -m src.cli analyze --repo /path/to/codebase --config custom_config.yml
 
-# Export format options
-python -m src.cli analyze --repo /path/to/codebase --format dmn --out drd.xml
-python -m src.cli analyze --repo /path/to/codebase --format markdown --out report.md
-python -m src.cli analyze --repo /path/to/codebase --format json --out rules.json
+# Export all formats at once
+python -m src.cli analyze --repo /path/to/codebase --out results/drd.xml --format all
+
+# Generate SVG visualization
+python -m src.utils.svg_visualizer --json results/drd.json --out results/drd.svg --type groups --layout dot
+```
+
+### Example Workflow
+
+```bash
+# 1. Analyze repository and generate all outputs
+python -m src.cli analyze --repo sample_repos/sample_sql_app --out results/drd.xml --format all
+
+# 2. Generate SVG visualizations
+python -m src.utils.svg_visualizer --json results/drd.json --out results/groups.svg --type groups
+python -m src.utils.svg_visualizer --json results/drd.json --out results/rules.svg --type rules
+
+# 3. View results
+open results/drd.md              # Markdown report
+open view_drd.html               # Interactive HTML viewer
+open results/groups.svg          # SVG graph visualization
 ```
 
 ### Configuration
