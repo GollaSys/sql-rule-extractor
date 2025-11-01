@@ -9,14 +9,14 @@ from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from extractor.ingest import RepositoryIngestor
-from extractor.rule_normalizer import RuleNormalizer
-from extractor.enricher import RuleEnricher
-from extractor.clusterer import RuleClusterer
-from extractor.drd_generator import DRDGenerator
-from extractor import DecisionModel, RuleDependency
-from utils.io import load_config, save_json, save_text, ensure_dir
-from utils.logging import setup_logging
+from src.extractor.ingest import RepositoryIngestor
+from src.extractor.rule_normalizer import RuleNormalizer
+from src.extractor.enricher import RuleEnricher
+from src.extractor.clusterer import RuleClusterer
+from src.extractor.drd_generator import DRDGenerator
+from src.extractor import DecisionModel, RuleDependency
+from src.utils.io import load_config, save_json, save_text, ensure_dir
+from src.utils.logging import setup_logging
 
 
 logger = logging.getLogger(__name__)
@@ -172,9 +172,9 @@ def analyze(
         if output_format == "json" or output_format == "all":
             # Convert to JSON-serializable format
             json_data = {
-                "rules": [r.dict() for r in rules],
-                "groups": [g.dict() for g in groups],
-                "dependencies": [d.dict() for d in dependencies]
+                "rules": [r.model_dump() for r in rules],
+                "groups": [g.model_dump() for g in groups],
+                "dependencies": [d.model_dump() for d in dependencies]
             }
             json_path = out.replace('.xml', '.json') if out.endswith('.xml') else f"{out}.json"
             save_json(json_data, json_path)

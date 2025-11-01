@@ -163,9 +163,9 @@ def main():
             "total_groups": len(groups),
             "total_dependencies": len(dependencies)
         },
-        "rules": [r.dict() for r in rules[:10]],  # First 10 for brevity
-        "groups": [g.dict() for g in groups],
-        "dependencies": [d.dict() for d in dependencies]
+        "rules": [r.model_dump() for r in rules[:10]],  # First 10 for brevity
+        "groups": [g.model_dump() for g in groups],
+        "dependencies": [d.model_dump() for d in dependencies]
     }
     save_json(json_data, "example_output/data.json")
     print("✓ JSON data: example_output/data.json")
